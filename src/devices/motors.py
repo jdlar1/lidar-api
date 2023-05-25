@@ -1,7 +1,7 @@
 import time
 from serial import Serial
 
-
+from src.local_types import Status
 from .device import Device
 
 
@@ -10,6 +10,7 @@ class Motors(Device):
         self.port = port
         self.baudrate = baudrate
         self.serial = Serial(port, baudrate)
+        self._status: Status = Status.NOT_INITIALIZED
 
     def initialize(self) -> bool:
         self.serial.open()
@@ -19,7 +20,10 @@ class Motors(Device):
         lines = self.receive_lines_str()
 
         return len(lines[0]) > 0
-        
+       
+    @property
+    def status(self) -> Status:
+        return self._status 
 
     def teardown(self) -> None:
         self.serial.close()
